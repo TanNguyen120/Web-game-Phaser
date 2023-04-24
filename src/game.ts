@@ -1,37 +1,31 @@
 import * as Phaser from 'phaser';
 
+/// THE PHASER ENGINE LIKE MANY ENGINE OUT THERE USE OBJECT ORIENTED PROGRAMMING FOR IT STRUCTURE
+
 // The very first scene of the game
 export default class GameGate extends Phaser.Scene {
+  // you super to inherited all attribute and method of phaser scene (the parent class)
   constructor() {
     super('menu');
   }
 
+  // THIS Method use to load ALL asset into the scene
   preload() {
     this.load.image('logo', 'assets/phaser3-logo.png');
     this.load.image('libs', 'assets/libs.png');
     this.load.glsl('bundle', 'assets/plasma-bundle.glsl.js');
     this.load.glsl('stars', 'assets/starfields.glsl.js');
+    this.load.image('background', 'assets/menuBG.jpg');
+    this.load.image('megaman', 'assets/Mega-Man-Sprite.png');
   }
 
+  // THIS method use to add ALL GAME OBJECT THAT WILL BE DISPLAY ONCE THE SCENE IS CREATED
   create() {
-    this.add
-      .shader('RGB Shift Field', 0, 0, window.innerWidth, window.innerHeight)
-      .setOrigin(0);
-
-    this.add.shader('Plasma', 0, 412, 1800, 172).setOrigin(0);
-
-    this.add.image(400, 300, 'libs');
-
-    const logo = this.add.image(400, 70, 'logo');
-
-    this.tweens.add({
-      targets: logo,
-      y: 350,
-      duration: 1500,
-      ease: 'Sine.inOut',
-      yoyo: true,
-      repeat: -1,
-    });
+    //REMEMBER: Add image order does matter because the engine will stacking image on to each other
+    //that mean  the first image will be back ground or low priority image that doesn`t want to be render all the time
+    //and the last image should be the character or thing that need to render on top of other game object
+    this.add.image(0, 0, 'background').setOrigin(0);
+    this.add.image(100, 300, 'megaman').setOrigin(0.5);
   }
 }
 
