@@ -42,6 +42,12 @@ const config = {
     width: window.innerWidth,
     height: window.innerHeight,
   },
+  physics: {
+    default: 'arcade',
+    arcade: {
+      debug: false,
+    },
+  },
   scene: [GameGate, PlatForm],
 };
 
