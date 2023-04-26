@@ -94,8 +94,10 @@ export default class PlatForm extends Phaser.Scene {
       const element = this.physics.add.image(16, 0, 'sakuraFlower');
       this.sakuraEffect.add(element);
       element.setRandomPosition(0, 6);
-      element.setScale(0.3);
-      element.setAcceleration(100, 100);
+      element.setScale(0.1);
+      element.setVelocity(200, 200);
+      element.setCollideWorldBounds(true);
+      element.setBounce(1);
     }
   }
   //=================================================================================================
@@ -107,6 +109,8 @@ export default class PlatForm extends Phaser.Scene {
     if (gameObject.x >= window.innerWidth) {
       // re position the object
       gameObject.x = 0;
+      this.sakuraEffect.x = 0;
+      this.sakuraEffect.y = 0;
       gameObject.y = Phaser.Math.Between(1, window.innerHeight);
     }
   }
