@@ -8,6 +8,8 @@ export default class PlatForm extends Phaser.Scene {
   private megaman1: any;
   private hero: any;
   private sakuraEffect: any;
+  private player: any;
+  private keyboardKey: any;
   // you super to inherited all attribute and method of phaser scene (the parent class)
   constructor() {
     super('platform');
@@ -37,6 +39,13 @@ export default class PlatForm extends Phaser.Scene {
     this.load.image('background', 'assets/menuBG.jpg');
     //=================================================================================================
     this.load.image('sakuraFlower', 'assets/effect/sakuraArt.png');
+    //=================================================================================================
+    this.load.atlas(
+      'player',
+      'assets/sprite-sheet/blueMage.png',
+      'assets/sprite-sheet/blueMage.json'
+    );
+    this.load.image('background', 'assets/menuBG.jpg');
   }
 
   // THIS method use to add ALL GAME OBJECT THAT WILL BE DISPLAY ONCE THE SCENE IS CREATED
@@ -68,7 +77,7 @@ export default class PlatForm extends Phaser.Scene {
     this.megaman1.play('running');
     //=================================================================================================
 
-    //hero animate
+    //HERO NPC Object
     this.anims.create({
       key: 'walking',
       frames: this.anims.generateFrameNames('heroWalk', {
@@ -99,7 +108,29 @@ export default class PlatForm extends Phaser.Scene {
       element.setCollideWorldBounds(true);
       element.setBounce(1);
     }
+    //=================================================================================================
+    //Create Player Object
+    this.player = this.physics.add.sprite(600, 700, 'player');
+    this.player.setScale(4);
+    this.anims.create({
+      key: 'playerStand',
+      frames: this.anims.generateFrameNames('player', {
+        start: 0,
+        end: 10,
+        zeroPad: 0,
+        prefix: 'mage_guardian-blue-',
+        suffix: '.png',
+      }),
+      frameRate: 14,
+      repeat: -1,
+    });
+    this.player.play('playerStand');
+    this.player.setCollideWorldBounds(true);
+    //===================================================================================================
+    //Register key listener for cursorKey
+    this.keyboardKey = this.input.keyboard.createCursorKeys();
   }
+
   //=================================================================================================
   // Function to make the game object move And re position when out of bound
   moveMegaMan(gameObject: any, speed: number): void {
@@ -109,9 +140,23 @@ export default class PlatForm extends Phaser.Scene {
     if (gameObject.x >= window.innerWidth) {
       // re position the object
       gameObject.x = 0;
-      this.sakuraEffect.x = 0;
-      this.sakuraEffect.y = 0;
       gameObject.y = Phaser.Math.Between(1, window.innerHeight);
+    }
+  }
+
+  // function to move player base on key
+  movePlayer(): void {
+    if (this.keyboardKey.left.isDown) {
+      this.player.setVelocityX(-500);
+    }
+    if (this.keyboardKey.right.isDown) {
+      this.player.setVelocityX(500);
+    }
+    if (this.keyboardKey.up.isDown) {
+      this.player.setVelocityY(500);
+    }
+    if (this.keyboardKey.down.isDown) {
+      this.player.setVelocityY(-500);
     }
   }
 
@@ -119,5 +164,6 @@ export default class PlatForm extends Phaser.Scene {
     // this.moveMegaMan(this.megaman1, 20);
     this.moveMegaMan(this.hero, 3);
     this.moveMegaMan(this.megaman1, 9);
+    this.movePlayer();
   }
 }
