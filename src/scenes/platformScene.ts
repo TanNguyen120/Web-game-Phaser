@@ -153,10 +153,10 @@ export default class PlatForm extends Phaser.Scene {
       this.player.setVelocityX(500);
     }
     if (this.keyboardKey.up.isDown) {
-      this.player.setVelocityY(500);
+      this.player.setVelocityY(-500);
     }
     if (this.keyboardKey.down.isDown) {
-      this.player.setVelocityY(-500);
+      this.player.setVelocityY(500);
     }
   }
 
