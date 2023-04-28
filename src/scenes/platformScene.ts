@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import FallingFlower from '../classes/fallingFlower';
 
 /// THE PHASER ENGINE LIKE MANY ENGINE OUT THERE USE OBJECT ORIENTED PROGRAMMING FOR IT STRUCTURE
 
@@ -7,7 +8,8 @@ export default class PlatForm extends Phaser.Scene {
   // Game object that we want in the game
   private megaman1: any;
   private hero: any;
-  private sakuraEffect: any;
+  protected fallPetal: any;
+  private powerCan: any;
   private player: any;
   private keyboardKey: any;
   // you super to inherited all attribute and method of phaser scene (the parent class)
@@ -46,6 +48,18 @@ export default class PlatForm extends Phaser.Scene {
       'assets/sprite-sheet/blueMage.json'
     );
     this.load.image('background', 'assets/menuBG.jpg');
+    //=================================================================================================
+    this.load.atlas(
+      'powerCan',
+      'assets/sprite-sheet/powerUp.png',
+      'assets/sprite-sheet/powerUp.json'
+    );
+    //=================================================================================================
+    this.load.atlas(
+      'sakura',
+      'assets/sprite-sheet/flowerPetal.png',
+      'assets/sprite-sheet/flowerPetal.json'
+    );
   }
 
   // THIS method use to add ALL GAME OBJECT THAT WILL BE DISPLAY ONCE THE SCENE IS CREATED
@@ -54,9 +68,6 @@ export default class PlatForm extends Phaser.Scene {
     //that mean  the first image will be back ground or low priority image that doesn`t want to be render all the time
     //and the last image should be the character or thing that need to render on top of other game object
     this.add.image(0, 0, 'background').setOrigin(0);
-
-    const frameNames = this.textures.get('megamanRun').getFrameNames();
-    console.log(frameNames);
     //=================================================================================================
     // also we have to create the animation for the sprite sheet
     this.anims.create({
@@ -73,7 +84,6 @@ export default class PlatForm extends Phaser.Scene {
     });
 
     this.megaman1 = this.add.sprite(400, 300, 'megamanRun');
-
     this.megaman1.play('running');
     //=================================================================================================
 
@@ -95,15 +105,29 @@ export default class PlatForm extends Phaser.Scene {
 
     this.hero.play('walking');
     //=================================================================================================
-    //THE FALLING SAKURA EFFECT
+    //THE PowerUp Energy Can
     // add physics group
-    this.sakuraEffect = this.physics.add.group();
+    this.powerCan = this.physics.add.group();
+    // Create Animation for powerUp Can
+    this.anims.create({
+      key: 'powerDisco',
+      frames: this.anims.generateFrameNames('powerCan', {
+        start: 1,
+        end: 3,
+        zeroPad: 2,
+        prefix: 'can-',
+        suffix: '.png',
+      }),
+      frameRate: 3,
+      repeat: -1,
+    });
     // use the loop to assign object to the physics group
     for (let index = 0; index < 5; index++) {
-      const element = this.physics.add.image(16, 0, 'sakuraFlower');
-      this.sakuraEffect.add(element);
+      const element = this.physics.add.sprite(16, 0, 'powerCan');
+      this.powerCan.add(element);
+      element.play('powerDisco');
       element.setRandomPosition(0, 6);
-      element.setScale(0.1);
+      element.setScale(1);
       element.setVelocity(200, 200);
       element.setCollideWorldBounds(true);
       element.setBounce(1);
@@ -129,6 +153,13 @@ export default class PlatForm extends Phaser.Scene {
     //===================================================================================================
     //Register key listener for cursorKey
     this.keyboardKey = this.input.keyboard.createCursorKeys();
+    //===================================================================================================
+    //Prepare sakura gameObject
+    //Group is the array of the engine. A Group is a way for you to create, manipulate, or recycle similar Game Objects.
+    this.fallPetal = this.add.group();
+    for (let index = 0; index < 6; index++) {
+      new FallingFlower(this);
+    }
   }
 
   //=================================================================================================
@@ -145,19 +176,24 @@ export default class PlatForm extends Phaser.Scene {
   }
 
   // function to move player base on key
-  movePlayer(): void {
+  movePlayer(): integer {
     if (this.keyboardKey.left.isDown) {
       this.player.setVelocityX(-500);
+      return 1;
     }
     if (this.keyboardKey.right.isDown) {
       this.player.setVelocityX(500);
+      return 1;
     }
     if (this.keyboardKey.up.isDown) {
       this.player.setVelocityY(-500);
+      return 1;
     }
     if (this.keyboardKey.down.isDown) {
       this.player.setVelocityY(500);
+      return 1;
     }
+    this.player.setVelocity(0);
   }
 
   update() {

@@ -17,5 +17,9 @@ class FallingFlower extends Phaser.GameObjects.Sprite {
     scene.add.existing(this);
     //and again the animation can be play here too
     this.play('fallingFlower');
+
+    scene.fallingFlower.add(this);
   }
 }
+
+export default FallingFlower;
