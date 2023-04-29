@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
 import FallingFlower from '../classes/fallingFlower';
+import MageAttack from '../classes/mageAttack';
 
 /// THE PHASER ENGINE LIKE MANY ENGINE OUT THERE USE OBJECT ORIENTED PROGRAMMING FOR IT STRUCTURE
 
@@ -9,6 +10,7 @@ export default class PlatForm extends Phaser.Scene {
   private megaman1: any;
   private hero: any;
   protected fallPetal: any;
+  protected projectiles: any;
   private powerCan: any;
   private player: any;
   private keyboardKey: any;
@@ -59,6 +61,12 @@ export default class PlatForm extends Phaser.Scene {
       'sakura',
       'assets/sprite-sheet/flowerPetal.png',
       'assets/sprite-sheet/flowerPetal.json'
+    );
+    //=================================================================================================
+    this.load.atlas(
+      'fireBall',
+      'assets/sprite-sheet/mageFireBall.png',
+      'assets/sprite-sheet/mageFireBall.json'
     );
   }
 
@@ -173,6 +181,21 @@ export default class PlatForm extends Phaser.Scene {
     for (let index = 0; index < 6; index++) {
       new FallingFlower(this);
     }
+    //===================================================================================================
+    this.projectiles = this.add.group();
+    // The projectile that the player will shoot out animation
+    this.anims.create({
+      key: 'fireBallFly',
+      frames: this.anims.generateFrameNames('fireBall', {
+        start: 1,
+        end: 60,
+        zeroPad: 0,
+        prefix: '',
+        suffix: '.png',
+      }),
+      frameRate: 60,
+      repeat: -1,
+    });
   }
 
   //=================================================================================================
@@ -209,14 +232,32 @@ export default class PlatForm extends Phaser.Scene {
     this.player.setVelocity(0);
   }
 
+  //shoot function
+  shoot(): void {
+    if (Phaser.Input.Keyboard.JustDown(this.keyboardKey.space)) {
+      console.log('shoot');
+      const ball = new MageAttack(this);
+      this.projectiles.add(ball);
+    }
+  }
+
   update() {
     // this.moveMegaMan(this.megaman1, 20);
     this.moveMegaMan(this.hero, 3);
     this.moveMegaMan(this.megaman1, 9);
     this.movePlayer();
+    this.shoot();
     // Because scene just call one update function per frame so we have to invoke the update of child object from here
     for (let index = 0; index < this.fallPetal.getChildren().length; index++) {
       const element = this.fallPetal.getChildren()[index];
+      element.update();
+    }
+    for (
+      let index = 0;
+      index < this.projectiles.getChildren().length;
+      index++
+    ) {
+      const element = this.projectiles.getChildren()[index];
       element.update();
     }
   }
