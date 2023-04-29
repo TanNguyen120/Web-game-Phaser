@@ -11,14 +11,23 @@ class FallingFlower extends Phaser.GameObjects.Sprite {
     super(
       scene,
       Math.floor(Math.random() * window.innerWidth) + 1,
-      0,
-      'sakuraFlower'
+      3,
+      'sakura'
     );
     scene.add.existing(this);
-    //and again the animation can be play here too
+    //and again the animation can be play here too]
+    //add physics to this object
+    scene.physics.world.enableBody(this);
+    this.body.velocity.y = 200;
+    this.body.velocity.x = Math.floor(Math.random() * 200) + 1;
     this.play('fallingFlower');
+    scene.fallPetal.add(this);
+  }
 
-    scene.fallingFlower.add(this);
+  update(...args: any[]): void {
+    if (this.y >= window.innerWidth) {
+      this.setPosition(Math.floor(Math.random() * window.innerWidth) + 1, 3);
+    }
   }
 }
 

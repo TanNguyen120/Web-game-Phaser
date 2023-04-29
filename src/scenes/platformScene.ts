@@ -154,6 +154,19 @@ export default class PlatForm extends Phaser.Scene {
     //Register key listener for cursorKey
     this.keyboardKey = this.input.keyboard.createCursorKeys();
     //===================================================================================================
+    this.anims.create({
+      key: 'fallingFlower',
+      frames: this.anims.generateFrameNames('sakura', {
+        start: 0,
+        end: 2,
+        zeroPad: 1,
+        prefix: 'flower-',
+        suffix: '.png',
+      }),
+      frameRate: 14,
+      repeat: -1,
+    });
+    //===================================================================================================
     //Prepare sakura gameObject
     //Group is the array of the engine. A Group is a way for you to create, manipulate, or recycle similar Game Objects.
     this.fallPetal = this.add.group();
@@ -201,5 +214,10 @@ export default class PlatForm extends Phaser.Scene {
     this.moveMegaMan(this.hero, 3);
     this.moveMegaMan(this.megaman1, 9);
     this.movePlayer();
+    // Because scene just call one update function per frame so we have to invoke the update of child object from here
+    for (let index = 0; index < this.fallPetal.getChildren().length; index++) {
+      const element = this.fallPetal.getChildren()[index];
+      element.update();
+    }
   }
 }
