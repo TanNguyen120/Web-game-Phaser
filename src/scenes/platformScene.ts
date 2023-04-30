@@ -8,6 +8,7 @@ import MageAttack from '../classes/mageAttack';
 export default class PlatForm extends Phaser.Scene {
   // Game object that we want in the game
   private megaman1: any;
+  private enemy: any;
   private backGround: any;
   private hero: any;
   protected fallPetal: any;
@@ -28,22 +29,15 @@ export default class PlatForm extends Phaser.Scene {
     //   'assets/sprite-sheet/megamanRun.json'
     // );
     //=================================================================================================
-
-    this.load.atlas(
-      'megamanRun',
-      'assets/sprite-sheet/megamanRun.png',
-      'assets/sprite-sheet/megamanRun.json'
-    );
-    //=================================================================================================
-
-    this.load.atlas(
-      'heroWalk',
-      'assets/sprite-sheet/heroWalk.png',
-      'assets/sprite-sheet/heroWalk.json'
-    );
     this.load.image('background', 'assets/menuBG.jpg');
     //=================================================================================================
     this.load.image('sakuraFlower', 'assets/effect/sakuraArt.png');
+    //=================================================================================================
+    this.load.atlas(
+      'enemy1',
+      'assets/sprite-sheet/enemy1.png',
+      'assets/sprite-sheet/enemy1.json'
+    );
     //=================================================================================================
     this.load.atlas(
       'player',
@@ -84,40 +78,11 @@ export default class PlatForm extends Phaser.Scene {
 
     //=================================================================================================
     // also we have to create the animation for the sprite sheet
-    this.anims.create({
-      key: 'running',
-      frames: this.anims.generateFrameNames('megamanRun', {
-        start: 0,
-        end: 9,
-        zeroPad: 3,
-        prefix: 'tile',
-        suffix: '.png',
-      }),
-      frameRate: 9,
-      repeat: -1,
-    });
 
-    this.megaman1 = this.add.sprite(400, 300, 'megamanRun');
-    this.megaman1.play('running');
     //=================================================================================================
 
     //HERO NPC Object
-    this.anims.create({
-      key: 'walking',
-      frames: this.anims.generateFrameNames('heroWalk', {
-        start: 78,
-        end: 80,
-        zeroPad: 3,
-        prefix: 'tile',
-        suffix: '.png',
-      }),
-      frameRate: 14,
-      repeat: -1,
-    });
 
-    this.hero = this.add.sprite(400, 300, 'heroWalk');
-
-    this.hero.play('walking');
     //=================================================================================================
     //THE PowerUp Energy Can
     // add physics group
@@ -202,20 +167,25 @@ export default class PlatForm extends Phaser.Scene {
       frameRate: 60,
       repeat: -1,
     });
+    //===================================================================================================
+    this.enemy = this.add.group();
+    // The projectile that the player will shoot out animation
+    this.anims.create({
+      key: 'enemy1',
+      frames: this.anims.generateFrameNames('enemy1Idle', {
+        start: 1,
+        end: 60,
+        zeroPad: 0,
+        prefix: '',
+        suffix: '.png',
+      }),
+      frameRate: 60,
+      repeat: -1,
+    });
   }
 
   //=================================================================================================
   // Function to make the game object move And re position when out of bound
-  moveMegaMan(gameObject: any, speed: number): void {
-    // random speed of the object
-    gameObject.x += speed;
-    // check if object is out of bound
-    if (gameObject.x >= window.innerWidth) {
-      // re position the object
-      gameObject.x = 0;
-      gameObject.y = Phaser.Math.Between(1, window.innerHeight);
-    }
-  }
 
   // function to move player base on key
   movePlayer(): integer {
@@ -249,8 +219,6 @@ export default class PlatForm extends Phaser.Scene {
 
   update() {
     // this.moveMegaMan(this.megaman1, 20);
-    this.moveMegaMan(this.hero, 3);
-    this.moveMegaMan(this.megaman1, 9);
     this.movePlayer();
     this.shoot();
     // Because scene just call one update function per frame so we have to invoke the update of child object from here
