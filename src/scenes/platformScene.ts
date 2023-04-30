@@ -8,6 +8,7 @@ import MageAttack from '../classes/mageAttack';
 export default class PlatForm extends Phaser.Scene {
   // Game object that we want in the game
   private megaman1: any;
+  private backGround: any;
   private hero: any;
   protected fallPetal: any;
   protected projectiles: any;
@@ -68,6 +69,8 @@ export default class PlatForm extends Phaser.Scene {
       'assets/sprite-sheet/mageFireBall.png',
       'assets/sprite-sheet/mageFireBall.json'
     );
+    //=================================================================================================
+    this.load.image('mountainBg', 'assets/tileSprite/parallax-mountain-bg.png');
   }
 
   // THIS method use to add ALL GAME OBJECT THAT WILL BE DISPLAY ONCE THE SCENE IS CREATED
@@ -75,7 +78,10 @@ export default class PlatForm extends Phaser.Scene {
     //REMEMBER: Add image order does matter because the engine will stacking image on to each other
     //that mean  the first image will be back ground or low priority image that doesn`t want to be render all the time
     //and the last image should be the character or thing that need to render on top of other game object
-    this.add.image(0, 0, 'background').setOrigin(0);
+    this.backGround = this.add
+      .tileSprite(0, 0, 1920, 1080, 'mountainBg')
+      .setOrigin(0);
+
     //=================================================================================================
     // also we have to create the animation for the sprite sheet
     this.anims.create({
@@ -260,5 +266,8 @@ export default class PlatForm extends Phaser.Scene {
       const element = this.projectiles.getChildren()[index];
       element.update();
     }
+
+    //we will have background auto scroll
+    this.backGround.tilePositionX += 0.5;
   }
 }
