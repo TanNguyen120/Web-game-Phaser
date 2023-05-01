@@ -65,6 +65,13 @@ export default class PlatForm extends Phaser.Scene {
       'assets/sprite-sheet/mageFireBall.json'
     );
     //=================================================================================================
+
+    this.load.atlas(
+      'bomb',
+      'assets/sprite-sheet/bomb.png',
+      'assets/sprite-sheet/bomb.json'
+    );
+    //=================================================================================================
     this.load.image('mountainBg', 'assets/tileSprite/parallax-mountain-bg.png');
   }
 
@@ -183,13 +190,27 @@ export default class PlatForm extends Phaser.Scene {
       frameRate: 5,
       repeat: -1,
     });
-
     //===================================================================================================
-
+    this.enemy = this.add.group();
+    // The projectile that the player will shoot out animation
+    this.anims.create({
+      key: 'bombDrop',
+      frames: this.anims.generateFrameNames('bomb', {
+        start: 1,
+        end: 4,
+        zeroPad: 0,
+        prefix: '48x48 - LargeMissileMovingFrame',
+        suffix: '.png',
+      }),
+      frameRate: 5,
+      repeat: -1,
+    });
+    //===================================================================================================
+    // The time event to spawn enemy
     this.time.addEvent({
       callback: this.spawn,
       callbackScope: this,
-      delay: 10000, // 1000 = 1 second
+      delay: 5000, // 1000 = 1 second
       loop: true,
     });
   }
@@ -257,7 +278,7 @@ export default class PlatForm extends Phaser.Scene {
     //---------------------------------------------
     for (let index = 0; index < this.enemy.getChildren().length; index++) {
       const element = this.enemy.getChildren()[index];
-      element.update();
+      element.update(this);
     }
     //we will have background auto scroll
     this.backGround.tilePositionX += 0.5;
