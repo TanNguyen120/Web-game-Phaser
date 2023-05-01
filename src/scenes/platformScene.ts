@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import FallingFlower from '../classes/fallingFlower';
 import MageAttack from '../classes/mageAttack';
+import Enemy1 from '../classes/enemy1';
 
 /// THE PHASER ENGINE LIKE MANY ENGINE OUT THERE USE OBJECT ORIENTED PROGRAMMING FOR IT STRUCTURE
 
@@ -171,19 +172,29 @@ export default class PlatForm extends Phaser.Scene {
     this.enemy = this.add.group();
     // The projectile that the player will shoot out animation
     this.anims.create({
-      key: 'enemy1',
-      frames: this.anims.generateFrameNames('enemy1Idle', {
+      key: 'enemy1Idle',
+      frames: this.anims.generateFrameNames('enemy1', {
         start: 1,
-        end: 60,
-        zeroPad: 0,
-        prefix: '',
+        end: 4,
+        zeroPad: 4,
+        prefix: 'frame',
         suffix: '.png',
       }),
-      frameRate: 60,
+      frameRate: 5,
       repeat: -1,
     });
-  }
 
+    //===================================================================================================
+
+    this.time.addEvent({
+      callback: this.spawn,
+      callbackScope: this,
+      delay: 10000, // 1000 = 1 second
+      loop: true,
+    });
+  }
+  //===================================================================================================
+  // CUSTOM METHOD (FUNCTION) FOR THE SCENE
   //=================================================================================================
   // Function to make the game object move And re position when out of bound
 
@@ -217,15 +228,24 @@ export default class PlatForm extends Phaser.Scene {
     }
   }
 
+  // timer event function
+  spawn(): void {
+    const enemy1 = new Enemy1(this);
+    this.enemy.add(enemy1);
+  }
+  //===================================================================================================
+
   update() {
     // this.moveMegaMan(this.megaman1, 20);
     this.movePlayer();
     this.shoot();
-    // Because scene just call one update function per frame so we have to invoke the update of child object from here
+    // Each Frame we have to check all the child that has create and call it's update function
     for (let index = 0; index < this.fallPetal.getChildren().length; index++) {
       const element = this.fallPetal.getChildren()[index];
       element.update();
     }
+    //---------------------------------------------
+
     for (
       let index = 0;
       index < this.projectiles.getChildren().length;
@@ -234,7 +254,11 @@ export default class PlatForm extends Phaser.Scene {
       const element = this.projectiles.getChildren()[index];
       element.update();
     }
-
+    //---------------------------------------------
+    for (let index = 0; index < this.enemy.getChildren().length; index++) {
+      const element = this.enemy.getChildren()[index];
+      element.update();
+    }
     //we will have background auto scroll
     this.backGround.tilePositionX += 0.5;
   }
