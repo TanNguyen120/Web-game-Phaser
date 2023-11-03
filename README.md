@@ -1,2 +1,2 @@
-# profile-game
-html 5 game that is a profilo page
+# a web game with phaser3 engine
+using react for base webapp and phaser3 as game engine
